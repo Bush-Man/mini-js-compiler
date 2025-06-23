@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"fmt"
 	"unicode"
 )
 
@@ -22,33 +21,31 @@ func NewLexer(input string) *Lexer {
 }
 
 func (lexer *Lexer) NextToken()*Token{
-  var currentToken *Token = nil
-   print(currentToken)
+ 
 
   if lexer.currentPosition >= len(lexer.input){
     eofChar := "\x00"
     token := NewToken(EOF, *NewTextSpan(lexer.currentPosition, lexer.currentPosition+1, eofChar))
-    currentToken = &token
-    print("EOF")
+    return &token
   }
  
 
   
-  for lexer.currentPosition < len(lexer.input){
+ 
      currentChar := lexer.input[lexer.currentPosition]
 
    
     if lexer.isNumber(currentChar) {
+      start := lexer.currentPosition
       numberString := lexer.consumeNumber()
-      token := NewToken(INTERGER,*NewTextSpan(lexer.currentPosition,lexer.currentPosition+1,string(numberString)))
-      print("NUMBER")
-      currentToken = &token
+      end := lexer.currentPosition
+      token := NewToken(INTERGER,*NewTextSpan(start,end,numberString))
+      return &token
 
-    }else{
-      lexer.currentPosition++
     }
-   }
-  return currentToken
+
+   
+  return lexer.consumePunctuation()
 
 }
 
@@ -81,15 +78,14 @@ func (lexer *Lexer) consumePunctuation()*Token{
 
 func (lexer *Lexer)consumeNumber()string{
   fullNumber := ""
-  currentChar := lexer.input[lexer.currentPosition]
-  for lexer.currentPosition < len(lexer.input) && lexer.isNumber(currentChar){
-    fullNumber+=string(currentChar)
+ 
+  for lexer.currentPosition < len(lexer.input) && lexer.isNumber(lexer.input[lexer.currentPosition]){
+    fullNumber+=string(lexer.input[lexer.currentPosition])
     lexer.currentPosition++
   }
   return fullNumber
 }
 func (lexer *Lexer) isNumber(char byte)bool{
-  fmt.Printf("NUmber: %c\n", char)
   return unicode.IsDigit(rune(char))
 }
 

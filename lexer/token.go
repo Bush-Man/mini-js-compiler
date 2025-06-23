@@ -31,7 +31,7 @@ const (
 	OR                = "||"
 
 	//Literals
-	INTERGER
+	INTERGER ="INTEGER"
 
 	// Special
 	EOF     = "EOF"
