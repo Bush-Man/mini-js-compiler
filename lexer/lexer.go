@@ -39,7 +39,7 @@ func (lexer *Lexer) NextToken()*Token{
       start := lexer.currentPosition
       numberString := lexer.consumeNumber()
       end := lexer.currentPosition
-      token := NewToken(INTERGER,*NewTextSpan(start,end,numberString))
+      token := NewToken(NUMBER,*NewTextSpan(start,end,numberString))
       return &token
 
     }
@@ -76,12 +76,12 @@ func (lexer *Lexer) consumePunctuation()*Token{
 
 }
 
-func (lexer *Lexer)consumeNumber()string{
+func (lexer *Lexer) consumeNumber() string {
   fullNumber := ""
- 
-  for lexer.currentPosition < len(lexer.input) && lexer.isNumber(lexer.input[lexer.currentPosition]){
-    fullNumber+=string(lexer.input[lexer.currentPosition])
-    lexer.currentPosition++
+  for lexer.currentPosition < len(lexer.input) &&
+      (lexer.isNumber(lexer.input[lexer.currentPosition]) || lexer.input[lexer.currentPosition] == '.') {
+      fullNumber += string(lexer.input[lexer.currentPosition])
+      lexer.currentPosition++
   }
   return fullNumber
 }

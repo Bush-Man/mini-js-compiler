@@ -8,9 +8,9 @@ import (
 func main(){
 
 	// var tokens []interface{}
-	input := "1234"
+	input := "123.4"
 	lexer := lexer.NewLexer(input)
-	for{
+	for range input {
 
 		token := lexer.NextToken()
 		fmt.Println(*token)  // Implement proper String() for Token if needed
