@@ -8,7 +8,8 @@ import (
 func main(){
 
 	// var tokens []interface{}
-	input := "123.4"
+	//%**--++
+	input := "++"
 	lexer := lexer.NewLexer(input)
 	for range input {
 

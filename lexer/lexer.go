@@ -37,7 +37,7 @@ func (lexer *Lexer) NextToken()*Token{
    
     if lexer.isNumber(currentChar) {
       start := lexer.currentPosition
-      numberString := lexer.consumeNumber()
+      numberString := lexer.tokenizeNumber()
       end := lexer.currentPosition
       token := NewToken(NUMBER,*NewTextSpan(start,end,numberString))
       return &token
@@ -45,28 +45,57 @@ func (lexer *Lexer) NextToken()*Token{
     }
 
    
-  return lexer.consumePunctuation()
+  return lexer.tokenizeArithmeticOperators()
 
 }
 
-func (lexer *Lexer) consumePunctuation()*Token{
+func (lexer *Lexer) tokenizeArithmeticOperators()*Token{
   switch lexer.input[lexer.currentPosition] {
   case '+':
-     token := NewToken(PLUS, *NewTextSpan(lexer.currentPosition, lexer.currentPosition+1, "+"))
-     lexer.currentPosition++
-     return &token
+      if lexer.currentPosition+1 < len(lexer.input) && lexer.input[lexer.currentPosition+1]== '+'{
+          token := NewToken(INCREMENT, *NewTextSpan(lexer.currentPosition, lexer.currentPosition+2, "++"))
+          lexer.currentPosition += 2
+          return &token
+      }else{
+
+        token := NewToken(PLUS, *NewTextSpan(lexer.currentPosition, lexer.currentPosition+1, "+"))
+        lexer.currentPosition++
+        return &token
+      }
   case '-':
-     token := NewToken(MINUS, *NewTextSpan(lexer.currentPosition, lexer.currentPosition+1, "-"))
-     lexer.currentPosition++
-     return &token    
-  case '*':
-      token := NewToken(ASTERISK, *NewTextSpan(lexer.currentPosition, lexer.currentPosition+1, "*"))
-      lexer.currentPosition++
+    if lexer.currentPosition+1 < len(lexer.input) && lexer.input[lexer.currentPosition+1] == '-'{
+      token := NewToken(DECREAMENT,*NewTextSpan(lexer.currentPosition,lexer.currentPosition+2, "--"))
+      lexer.currentPosition +=2
       return &token
+
+    }else{
+
+      token := NewToken(MINUS, *NewTextSpan(lexer.currentPosition, lexer.currentPosition+1, "-"))
+      lexer.currentPosition++
+      return &token    
+    }
+  case '*':
+     if lexer.currentPosition+1 < len(lexer.input) && lexer.input[lexer.currentPosition+1] == '*' {
+      token := NewToken(EXPONENTIAL,*NewTextSpan(lexer.currentPosition,lexer.currentPosition+2, "**"))
+      lexer.currentPosition +=2
+      return &token
+
+     }else{
+
+       token := NewToken(ASTERISK, *NewTextSpan(lexer.currentPosition, lexer.currentPosition+1, "*"))
+       lexer.currentPosition++
+       return &token
+      }
   case '/':
        token := NewToken(SLASH, *NewTextSpan(lexer.currentPosition, lexer.currentPosition+1, "/"))
        lexer.currentPosition++
        return &token 
+
+  case '%':
+    token := NewToken(PERCENT,*NewTextSpan(lexer.currentPosition, lexer.currentPosition+1, "%"))
+    lexer.currentPosition++
+    return &token
+       
          
   default:
      token := NewToken(UNKNOWN, *NewTextSpan(lexer.currentPosition, lexer.currentPosition+1, string(lexer.input[lexer.currentPosition])))
@@ -76,7 +105,9 @@ func (lexer *Lexer) consumePunctuation()*Token{
 
 }
 
-func (lexer *Lexer) consumeNumber() string {
+
+
+func (lexer *Lexer) tokenizeNumber() string {
   fullNumber := ""
   for lexer.currentPosition < len(lexer.input) &&
       (lexer.isNumber(lexer.input[lexer.currentPosition]) || lexer.input[lexer.currentPosition] == '.') {
