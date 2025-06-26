@@ -9,7 +9,7 @@ func main(){
 
 	// var tokens []interface{}
 	//%**--++
-	input := "++"
+	input := "%="
 	lexer := lexer.NewLexer(input)
 	for range input {
 
